@@ -1,5 +1,6 @@
 import ftch from '../index'
 import PropTypes from "prop-types";
+import { config } from '../../../config'
 
 
 export const postType = PropTypes.shape({
@@ -15,12 +16,12 @@ export const postsType = PropTypes.arrayOf(postType)
 
 export async function getPosts() {
 	// TODO validate
-	return await ftch.GET('/posts')
+	return await ftch.GET(config.postsUrl)
 }
 
 export async function editPost(newValue, ID = newValue.id) {
 	// TODO validate
-	return await ftch.PUT('/posts/' + ID, newValue)
+	return await ftch.PUT(config.postsUrl + '' + ID, newValue)
 }
 // editPostByID({
 // 	date: "2016-01-10T07:24:52 -03:00",

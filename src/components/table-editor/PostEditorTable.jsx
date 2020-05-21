@@ -152,6 +152,7 @@ function Row({ post, editing, editNewRow }) {
 						on: editing === true, items: [
 							{
 								icon: "tick-circle", title: 'Save',
+								// TODO: Fix editPost import => next fix
 								onSelect: () => editPost(postRow).then(r => {
 									// TODO:  fix hard reload(for back remove) ♿
 									document.location.reload();
