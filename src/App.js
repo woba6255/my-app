@@ -1,26 +1,27 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useState } from 'react'
+import { PostEditor } from "./components/table-editor/table-editor"
+import { getPosts } from "./modules/fetch/api"
+import { Pane } from "evergreen-ui"
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+	const [posts, setPosts] = useState([])
+
+	useEffect(() => {
+		console.log('re')
+		if (posts.length === 0) {
+			getPosts().then(data => setPosts(data))
+		}
+	}, []);
+
+	return (
+		<Pane>
+			{
+				posts.length
+					? <PostEditor posts={posts}/>
+					: <p>Waiting...</p>
+			}
+		</Pane>
+	);
 }
 
 export default App;
