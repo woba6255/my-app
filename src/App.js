@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { PostEditor } from "./components/table-editor/table-editor"
+import { PostEditorTable } from "./components/table-editor/table-editor"
 import { getPosts } from "./modules/fetch/api"
 import { Pane } from "evergreen-ui"
 
@@ -17,7 +17,7 @@ function App() {
 		<Pane>
 			{
 				posts.length
-					? <PostEditor posts={posts}/>
+					? <PostEditorTable posts={posts}/>
 					: <p>Waiting...</p>
 			}
 		</Pane>

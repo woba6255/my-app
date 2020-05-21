@@ -1,15 +1,10 @@
 import React, { Fragment, useState } from "react"
 import PropTypes from "prop-types";
-import {
-	 Menu,
-	MoreIcon,
-	Popover, Position,
-	Table,
-	TextInput,
-} from "evergreen-ui";
-import { postType, postsType, editPost } from "../../modules/fetch/api"
+import { Table, TextInput, } from "evergreen-ui";
+import { editPost, postsType, postType } from "../../modules/fetch/api"
+import { ActionsMenu } from "./ActionsMenu"
 
-PostEditor.propTypes = {
+PostEditorTable.propTypes = {
 	posts: postsType,
 	editPost: PropTypes.func,
 }
@@ -27,10 +22,11 @@ Row.propTypes = {
 }
 
 
+
 const idWidth = { maxWidth: '5rem' }
 const editBtnWidth = { maxWidth: '4rem' }
 
-export function PostEditor({ posts }) {
+export function PostEditorTable({ posts }) {
 	const [editingRow, changeEditingRow] = useState(null)
 
 	// const [alertShow, changeAlertShow] = useState(true)
@@ -39,7 +35,6 @@ export function PostEditor({ posts }) {
 		if (editingRow === null) changeEditingRow(id)
 		else {
 			changeEditingRow(id)
-			console.log(id)
 		}
 	}
 
@@ -96,7 +91,7 @@ export function PostEditor({ posts }) {
 	)
 }
 
-// Table Header
+
 function Headers({ headers }) {
 	return headers.map((header, i) => (
 		<Table.TextHeaderCell
@@ -111,10 +106,15 @@ function Headers({ headers }) {
 }
 
 
-// Table Body Row
+
 function Row({ post, editing, editNewRow }) {
 	const [postRow, editPostRow] = useState(post)
+
 	// const [showMenu, setShowMenu] = useState(false)
+	function back() {
+		editPostRow(post)
+		editNewRow(null)
+	}
 
 	return (
 		<Table.Row>
@@ -122,7 +122,7 @@ function Row({ post, editing, editNewRow }) {
 				style={idWidth}
 			>
 				{
-					idFormat(postRow.id)
+					idFormat(post.id)
 				}
 			</Table.TextCell>
 			<Table.TextCell>
@@ -162,52 +162,33 @@ function Row({ post, editing, editNewRow }) {
 			<Table.TextCell
 				style={editBtnWidth}
 			>
-				<Popover
-					position={Position.BOTTOM_LEFT}
-					// isShown={showMenu}
-					content={
-						<Menu>
-							<Menu.Group>
-								{
-									editing
-										? (
-											<Fragment>
-												<Menu.Item
-													icon="edit"
-													// TODO: FIX BAD IMPORT
-													onSelect={() => {
-														editPost(postRow)
-														editNewRow(null)
-													}}
-												>
-													Save
-												</Menu.Item>
-												<Menu.Item
-													icon="cross"
-													onSelect={() => editNewRow(null)}
-												>
-													Cancel
-												</Menu.Item>
-											</Fragment>
-										)
-										: <Menu.Item
-											icon="edit"
-											color="muted"
-											style={{ cursor: "pointer" }}
-											onSelect={() => editNewRow(post.id)}
-										>
-											Edit
-										</Menu.Item>
-								}
-							</Menu.Group>
-						</Menu>
+				<ActionsMenu menuItems={[
+					{
+						on: editing === true, items: [
+							{
+								icon: "tick-circle", title: 'Save',
+								onSelect: () => editPost(postRow).then(r => editNewRow(null))
+							},
+							{
+								icon: "arrow-left", title: 'Return',
+								onSelect: back
+							},
+							{
+								icon: "cross", title: 'Cancel',
+								onSelect: () => editNewRow(null)
+							}
+						]
+					},
+					{
+						on: editing === false, items: [
+							{
+								icon: "edit", title: 'Edit',
+								color: "muted", style: { cursor: "pointer" },
+								onSelect: () => editNewRow(postRow.id)
+							},
+						]
 					}
-				>
-					<MoreIcon
-						style={{cursor: 'pointer'}}
-						// onClick={setShowMenu(true)}
-					/>
-				</Popover>
+				]}/>
 			</Table.TextCell>
 		</Table.Row>
 	)
