@@ -148,7 +148,7 @@ function Row({ post, editing, editNewRow }) {
 			>
 				<ActionsMenu menuItems={[
 					{
-						// TODO: Refactor ActionsMenu (delete or ... "on")
+						// TODO: Refactor ActionsMenu ("on" ...)
 						on: editing === true, items: [
 							{
 								icon: "tick-circle", title: 'Save',
