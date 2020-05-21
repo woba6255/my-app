@@ -38,24 +38,9 @@ export function PostEditorTable({ posts }) {
 		}
 	}
 
-	// => saveEditingRow?
-	function saveRow(id) {
-		console.log(id)
-	}
-
 	return (
 		// TODO: remove:
 		<Fragment>
-			{/*<Dialog*/}
-			{/*	isShown={alertShow}*/}
-			{/*	onCloseComplete={() => changeAlertShow(false)}*/}
-			{/*	isConfirmDisabled={true}*/}
-			{/*	confirmLabel={'Save'}*/}
-			{/*	hasHeader={false}*/}
-			{/*>*/}
-			{/*	*/}
-			{/*</Dialog>*/}
-
 			<Table>
 				<Table.Head>
 
@@ -79,7 +64,6 @@ export function PostEditorTable({ posts }) {
 									post={post}
 									key={post.id}
 									editNewRow={editNewRow}
-									saveEditingRow={saveRow}
 									editing={post.id === editingRow}
 								/>
 							)
@@ -164,10 +148,14 @@ function Row({ post, editing, editNewRow }) {
 			>
 				<ActionsMenu menuItems={[
 					{
+						// TODO: Refactor ActionsMenu (delete or ... "on")
 						on: editing === true, items: [
 							{
 								icon: "tick-circle", title: 'Save',
-								onSelect: () => editPost(postRow).then(r => editNewRow(null))
+								onSelect: () => editPost(postRow).then(r => {
+									// TODO:  fix hard reload(for back remove) ♿
+									document.location.reload();
+									editNewRow(null)})
 							},
 							{
 								icon: "arrow-left", title: 'Return',

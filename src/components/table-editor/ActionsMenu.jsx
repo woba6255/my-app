@@ -14,6 +14,7 @@ export function ActionsMenu({ menuItems }) {
 			<Menu>
 				<Menu.Group>
 					{
+						// TODO: Refactor ActionsMenu
 						menuItems.map(items =>
 							items.on === true
 							&& items.items.map(item =>
