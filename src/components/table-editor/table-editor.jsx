@@ -1,18 +1,13 @@
-import React, { Fragment, useEffect, useState } from "react"
+import React, { Fragment, useState } from "react"
 import PropTypes from "prop-types";
 import {
-	Button,
-	CrossIcon,
-	Dialog,
-	EditIcon, Menu,
+	 Menu,
 	MoreIcon,
 	Popover, Position,
 	Table,
 	TextInput,
-	TickCircleIcon,
-	Tooltip
 } from "evergreen-ui";
-import { postType, postsType } from "../../modules/fetch/api"
+import { postType, postsType, editPost } from "../../modules/fetch/api"
 
 PostEditor.propTypes = {
 	posts: postsType,
@@ -144,7 +139,7 @@ function Row({ post, editing, editNewRow }) {
 								value={postRow.author}
 							/>
 						)
-						: postRow.title
+						: postRow.author
 				}
 			</Table.TextCell>
 			<Table.TextCell>
@@ -177,10 +172,19 @@ function Row({ post, editing, editNewRow }) {
 									editing
 										? (
 											<Fragment>
-												<Menu.Item icon="edit">Save</Menu.Item>
+												<Menu.Item
+													icon="edit"
+													// TODO: FIX BAD IMPORT
+													onSelect={() => {
+														editPost(postRow)
+														editNewRow(null)
+													}}
+												>
+													Save
+												</Menu.Item>
 												<Menu.Item
 													icon="cross"
-													onClick={() => editNewRow(null)}
+													onSelect={() => editNewRow(null)}
 												>
 													Cancel
 												</Menu.Item>
@@ -190,7 +194,7 @@ function Row({ post, editing, editNewRow }) {
 											icon="edit"
 											color="muted"
 											style={{ cursor: "pointer" }}
-											onClick={() => editNewRow(post.id)}
+											onSelect={() => editNewRow(post.id)}
 										>
 											Edit
 										</Menu.Item>
