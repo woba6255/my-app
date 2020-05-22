@@ -18,10 +18,10 @@ export function PostEditorTable(props) {
 			data={posts}
 			schema={{
 				body: [
-					{ header: '#', styles: idWidth, formater: (id) => idFormat(id), key: 'id', role: 'id', onSave: null },
-					{ header: 'Author', key: 'author', role: 'input', onSave: null },
-					{ header: 'Title', key: 'title', role: 'input', onSave: null },
-					{ header: 'Body', key: 'body', role: 'textArea' ,onSave: null },
+					{ header: '#', styles: idWidth,  key: 'id', role: 'id', formater: (id) => idFormat(id) },
+					{ header: 'Author', key: 'author', role: 'input' },
+					{ header: 'Title', key: 'title', role: 'input' },
+					{ header: 'Body', key: 'body', role: 'textArea' },
 				],
 			}}/>
 	)

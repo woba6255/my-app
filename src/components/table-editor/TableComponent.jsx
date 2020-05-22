@@ -1,31 +1,11 @@
-import React, { Fragment, useState } from "react"
-import PropTypes from "prop-types";
-import { Table, TextInput, } from "evergreen-ui";
-import { editPost, postsType, postType } from "../../modules/fetch/api"
-import { MenuRowActions } from "./MenuRowActions"
-
-Headers.propTypes = {
-	headers: PropTypes.arrayOf(PropTypes.shape({
-		value: PropTypes.any,
-		styles: PropTypes.object,
-	}))
-}
-Row.propTypes = {
-	post: postType,
-	editNewRow: PropTypes.func,
-	saveRow: PropTypes.func,
-	editing: PropTypes.bool,
-}
-
-
-const idWidth = { maxWidth: '5rem' }
-const editBtnWidth = { maxWidth: '4rem' }
+import React, { useState } from "react"
+import { Table, Textarea, TextInput, } from "evergreen-ui";
+import { editPost } from "../../modules/fetch/api"
+import { ActionsMenu } from "./ActionsMenu"
 
 
 export function TableCreator({ data, schema }) {
 	const [editingRowID, setEditingRowID] = useState(null)
-
-
 	return (
 		<Table>
 			<Table.Head>
@@ -42,88 +22,147 @@ export function TableCreator({ data, schema }) {
 					))
 				}
 			</Table.Head>
-			<Table.Row>
-				<Table.TextCell
-					style={editBtnWidth}
-				>
-					<MenuRowActions menuItems={[
-						{
-							// TODO: Refactor ActionsMenu ("on" ...)
-							on: editing === true, items: [
-								{
-									icon: "tick-circle", title: 'Save',
-									// TODO: Fix editPost import => next fix
-									onSelect: () => editPost(postRow).then(r => {
-										// TODO:  fix hard reload(for back remove) ♿
-										document.location.reload();
-										editNewRow(null)
-									})
-								},
-								{
-									icon: "arrow-left", title: 'Return',
-									onSelect: back
-								},
-								{
-									icon: "cross", title: 'Cancel',
-									onSelect: () => editNewRow(null)
-								}
-							]
-						},
-						{
-							on: editing === false, items: [
-								{
-									icon: "edit", title: 'Edit',
-									color: "muted", style: { cursor: "pointer" },
-									onSelect: () => editNewRow(postRow.id)
-								},
-							]
-						}
-					]}/>
-				</Table.TextCell>
-			</Table.Row>
+			<Table.Body style={{overflowY: 'scroll'}}>
+				{
+					data.map(rowData => {
+						const editing = rowData.id === editingRowID
+						return (
+							<Row rowData={rowData} schema={schema} editing={editing} setEditingRowID={setEditingRowID}/>
+						)
+					})
+				}
+			</Table.Body>
 		</Table>
 	)
 }
 
+const editBtnWidth = { maxWidth: '4rem' }
 
-function Row({ post, editing, editNewRow }) {
-	const [postRow, editPostRow] = useState(post)
+function Row({ rowData, schema, editing, setEditingRowID }) {
+	const [rowState, setRowState] = useState(rowData)
 
-	// const [showMenu, setShowMenu] = useState(false)
 	function back() {
-		editPostRow(post)
-		editNewRow(null)
+		setRowState(rowData)
+		setEditingRowID(null)
 	}
-	return ({/*
-		// 	<Table.TextCell
-	// 		style={idWidth}
-	// 	>
-	// 		{
-	// 			idFormat(post.id)
-	// 		}
-	// 	</Table.TextCell>
-	// <Table.TextCell>
-	// 	{
-	// 		editing === true
-	// 			? (
-	// 				<TextInput
-	// 					width="100%"
-	// 					onChange={e => {
-	// 						const newValue = Object.assign({}, postRow)
-	// 						newValue.author = e.target.value
-	// 						editPostRow(newValue)
-	// 					}}
-	// 					value={postRow.author}
-	// 				/>
-	// 			)
-	// 			: postRow.author
-	// 	}
-	// </Table.TextCell>
-	*/})
 
+	return (
+		<Table.Row height={'auto'} style={{ minHeight: '45px' }}>
+			{
+				// Будет ли рендерильник это оптимизировать? Думаю нет.
+				schema.body.map(cellSchema => {
+					return (
+						<TableCell rowState={rowState} setRowState={setRowState} cellSchema={cellSchema}
+						           editing={editing}/>
+					)
+				})
+			}
+			<Table.Cell style={editBtnWidth}>
+				<ActionsMenu menuItems={[
+					{
+						// TODO: Refactor ActionsMenu ("on" ...)
+						on: editing === true, items: [
+							{
+								icon: "tick-circle", title: 'Save',
+								// TODO: Fix editPost import => next fix
+								onSelect: () => editPost(rowState).then(r => {
+									// TODO:  fix hard reload(for back remove) ♿
+									document.location.reload();
+									setEditingRowID(null)
+								})
+							},
+							{
+								icon: "arrow-left", title: 'Return',
+								onSelect: back
+							},
+							{
+								icon: "cross", title: 'Cancel',
+								onSelect: () => setEditingRowID(null)
+							}
+						]
+					},
+					{
+						on: editing === false, items: [
+							{
+								icon: "edit", title: 'Edit',
+								color: "muted", style: { cursor: "pointer" },
+								onSelect: () => setEditingRowID(rowData.id)
+							},
+						]
+					}
+				]}/>
+			</Table.Cell>
+		</Table.Row>
+	)
 }
 
+function TableCell({ cellSchema, rowState, setRowState, editing }) {
+	const [textAreaWidth, setTextAreaWidth] = useState(null);
+	const role = cellSchema.role
+	const formater = cellSchema.formater
+	const cellState = rowState[cellSchema.key]
+	const value = formater
+		? formater(cellState)
+		: cellState
 
-function idFormat(id) {
-	return '...' + id.slice(id.length - 6)
+	if (role === 'id' || role === 'static') return (
+		<Table.TextCell
+			style={cellSchema.styles}
+		>
+			{
+				value
+			}
+		</Table.TextCell>
+	)
+	else if (role === 'input') {
+		return (
+			<Table.TextCell
+				style={cellSchema.styles}
+			>
+				{
+					editing === true
+						? (
+							<TextInput
+								width="100%"
+								onChange={e => {
+									const newValue = Object.assign({}, rowState)
+									newValue[cellSchema.key] = e.target.value
+									setRowState(newValue)
+								}}
+								value={value}
+							/>
+						)
+						: value
+				}
+			</Table.TextCell>
+		)
+	} else if (role === 'textArea') {
+		return (
+			<Table.TextCell
+				style={cellSchema.styles}
+			>
+				{
+					editing === true
+						? (
+							<Textarea
+								style={{ marginTop: '10px', marginBottom: '10px' }}
+								minHeight="auto"
+								heigth="10px"
+								width="100%"
+								resize="vertical"
+								onChange={e => {
+									const newValue = Object.assign({}, rowState)
+									newValue[cellSchema.key] = e.target.value
+									setRowState(newValue)
+								}}
+								value={value}
+							/>
+						)
+						: value
+				}
+
+			</Table.TextCell>
+		)
+	}
 }
+
