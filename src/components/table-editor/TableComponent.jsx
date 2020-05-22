@@ -1,8 +1,12 @@
 import React, { useState } from "react"
-import { Table, Textarea, TextInput, } from "evergreen-ui";
+import { Button, Table, Textarea, TextInput, } from "evergreen-ui";
+import DatePicker from "react-datepicker"
+import "react-datepicker/dist/react-datepicker.css";
+
 import { editPost } from "../../modules/fetch/api"
 import { ActionsMenu } from "./ActionsMenu"
 
+const editBtnWidth = { maxWidth: '4rem' }
 
 export function TableCreator({ data, schema }) {
 	const [editingRowID, setEditingRowID] = useState(null)
@@ -21,8 +25,12 @@ export function TableCreator({ data, schema }) {
 						</Table.TextHeaderCell>
 					))
 				}
+				<Table.TextHeaderCell
+					style={editBtnWidth}
+				>
+				</Table.TextHeaderCell>
 			</Table.Head>
-			<Table.Body style={{overflowY: 'scroll'}}>
+			<Table.Body style={{ overflowY: 'scroll' }}>
 				{
 					data.map(rowData => {
 						const editing = rowData.id === editingRowID
@@ -36,7 +44,6 @@ export function TableCreator({ data, schema }) {
 	)
 }
 
-const editBtnWidth = { maxWidth: '4rem' }
 
 function Row({ rowData, schema, editing, setEditingRowID }) {
 	const [rowState, setRowState] = useState(rowData)
@@ -64,7 +71,7 @@ function Row({ rowData, schema, editing, setEditingRowID }) {
 						on: editing === true, items: [
 							{
 								icon: "tick-circle", title: 'Save',
-								// TODO: Fix editPost import => next fix
+								// TODO: Fix hardcor editPost ♿
 								onSelect: () => editPost(rowState).then(r => {
 									// TODO:  fix hard reload(for back remove) ♿
 									document.location.reload();
@@ -97,7 +104,6 @@ function Row({ rowData, schema, editing, setEditingRowID }) {
 }
 
 function TableCell({ cellSchema, rowState, setRowState, editing }) {
-	const [textAreaWidth, setTextAreaWidth] = useState(null);
 	const role = cellSchema.role
 	const formater = cellSchema.formater
 	const cellState = rowState[cellSchema.key]
@@ -105,64 +111,107 @@ function TableCell({ cellSchema, rowState, setRowState, editing }) {
 		? formater(cellState)
 		: cellState
 
-	if (role === 'id' || role === 'static') return (
-		<Table.TextCell
-			style={cellSchema.styles}
-		>
-			{
-				value
-			}
-		</Table.TextCell>
-	)
-	else if (role === 'input') {
-		return (
-			<Table.TextCell
-				style={cellSchema.styles}
-			>
-				{
-					editing === true
-						? (
-							<TextInput
-								width="100%"
-								onChange={e => {
-									const newValue = Object.assign({}, rowState)
-									newValue[cellSchema.key] = e.target.value
-									setRowState(newValue)
-								}}
-								value={value}
-							/>
-						)
-						: value
-				}
-			</Table.TextCell>
-		)
-	} else if (role === 'textArea') {
-		return (
-			<Table.TextCell
-				style={cellSchema.styles}
-			>
-				{
-					editing === true
-						? (
-							<Textarea
-								style={{ marginTop: '10px', marginBottom: '10px' }}
-								minHeight="auto"
-								heigth="10px"
-								width="100%"
-								resize="vertical"
-								onChange={e => {
-									const newValue = Object.assign({}, rowState)
-									newValue[cellSchema.key] = e.target.value
-									setRowState(newValue)
-								}}
-								value={value}
-							/>
-						)
-						: value
-				}
+	function onChange(e) {
+		const newValue = Object.assign({}, rowState)
+		newValue[cellSchema.key] = e.target.value
+		setRowState(newValue)
+	}
 
-			</Table.TextCell>
-		)
+	switch (role) {
+		case 'id':
+		case 'static':
+			return (
+				<Table.TextCell
+					style={cellSchema.styles}
+				>
+					{
+						value
+					}
+				</Table.TextCell>
+			)
+		case "input":
+			return (
+				<Table.TextCell
+					style={cellSchema.styles}
+				>
+					{
+						editing === true
+							? (
+								<TextInput
+									width="100%"
+									onChange={(e) => onChange(e)}
+									value={value}
+								/>
+							)
+							: value
+					}
+				</Table.TextCell>
+			)
+		case "dateArea":
+			return (
+				<Table.TextCell
+					style={cellSchema.styles}
+				>
+					{
+						editing === true
+							? (
+								<Textarea
+									style={{ marginTop: '10px', marginBottom: '10px' }}
+									minHeight="auto"
+									heigth="10px"
+									width="100%"
+									resize="vertical"
+									onChange={(e) => onChange(e)}
+									value={value}
+								/>
+							)
+							: value
+					}
+
+				</Table.TextCell>
+			)
+		case "date":
+			return (
+				<Table.TextCell
+					style={cellSchema.styles}
+				>
+					{
+						editing === true
+							? (
+								<DatePicker
+									selected={Date.parse(cellState)}
+									onChange={date => {
+										const newValue = Object.assign({}, rowState)
+										newValue[cellSchema.key] = date
+										setRowState(newValue)
+									}}
+									customInput={<DateInput date={value} onChange={onChange}/>}
+									timeFormat="HH:mm"
+									showTimeSelect
+								/>
+							)
+							: value
+					}
+
+				</Table.TextCell>
+			)
+		default:
+			return (
+				<Table.TextCell
+					style={cellSchema.styles}
+				>
+					Not found(
+				</Table.TextCell>
+			)
 	}
 }
 
+function DateInput({ date, onClick, onChange }) {
+	return (
+		<TextInput
+			onClick={onClick}
+			onChange={(e) => onChange(e)}
+			value={date}
+		/>
+	)
+}

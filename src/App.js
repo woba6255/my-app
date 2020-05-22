@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { PostEditorTable } from "./components/table-editor/PostEditorTable"
+import { PostEditorTable } from "./components/PostEditorTable"
 import { getPosts } from "./modules/fetch/api"
 import { Pane } from "evergreen-ui"
 
