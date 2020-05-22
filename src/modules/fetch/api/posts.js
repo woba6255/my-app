@@ -21,7 +21,7 @@ export async function getPosts() {
 
 export async function editPost(newValue, ID = newValue.id) {
 	// TODO validate
-	return await ftch.PUT(config.postsUrl + '' + ID, newValue)
+	return await ftch.PUT(config.postsUrl + '/' + ID, newValue)
 }
 // editPostByID({
 // 	date: "2016-01-10T07:24:52 -03:00",

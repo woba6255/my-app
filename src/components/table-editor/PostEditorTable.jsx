@@ -2,7 +2,7 @@ import React, { Fragment, useState } from "react"
 import PropTypes from "prop-types";
 import { Table, TextInput, } from "evergreen-ui";
 import { editPost, postsType, postType } from "../../modules/fetch/api"
-import { ActionsMenu } from "./ActionsMenu"
+import { MenuRowActions } from "./MenuRowActions"
 
 PostEditorTable.propTypes = {
 	posts: postsType,
@@ -50,7 +50,8 @@ export function PostEditorTable({ posts }) {
 							{ value: '#', styles: idWidth },
 							{ value: 'Author' },
 							{ value: 'Title' },
-							{ styles: editBtnWidth }
+							{ value: 'Body'},
+							{ styles: editBtnWidth },
 						]
 					}/>
 				</Table.Head>
@@ -88,8 +89,6 @@ function Headers({ headers }) {
 		</Table.TextHeaderCell>
 	))
 }
-
-
 
 function Row({ post, editing, editNewRow }) {
 	const [postRow, editPostRow] = useState(post)
@@ -143,10 +142,27 @@ function Row({ post, editing, editNewRow }) {
 						: postRow.title
 				}
 			</Table.TextCell>
+			<Table.TextCell>
+				{
+					editing === true
+						? (
+							<TextInput
+								width="100%"
+								onChange={e => {
+									const newValue = Object.assign({}, postRow)
+									newValue.body = e.target.value
+									editPostRow(newValue)
+								}}
+								value={postRow.body}
+							/>
+						)
+						: postRow.body
+				}
+			</Table.TextCell>
 			<Table.TextCell
 				style={editBtnWidth}
 			>
-				<ActionsMenu menuItems={[
+				<MenuRowActions menuItems={[
 					{
 						// TODO: Refactor ActionsMenu ("on" ...)
 						on: editing === true, items: [
@@ -156,7 +172,8 @@ function Row({ post, editing, editNewRow }) {
 								onSelect: () => editPost(postRow).then(r => {
 									// TODO:  fix hard reload(for back remove) ♿
 									document.location.reload();
-									editNewRow(null)})
+									editNewRow(null)
+								})
 							},
 							{
 								icon: "arrow-left", title: 'Return',
