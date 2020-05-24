@@ -3,7 +3,7 @@ import { Table, Textarea, TextInput, } from "evergreen-ui";
 import DatePicker from "react-datepicker"
 import "react-datepicker/dist/react-datepicker.css";
 
-import { editPost } from "modules/fetch/api"
+import { editPost } from "~/modules/fetch/api"
 import { ActionsMenu } from "./ActionsMenu"
 
 const editBtnWidth = { maxWidth: '4rem' }

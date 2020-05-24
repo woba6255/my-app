@@ -1,27 +1,26 @@
-import React, { useEffect, useState } from 'react'
-import { PostEditorTable } from "./components/PostEditorTable"
-import { getPosts } from "./modules/fetch/api"
-import { Pane } from "evergreen-ui"
+import React from 'react'
+import { MainRouter } from "~/router"
 
 function App() {
-	const [posts, setPosts] = useState([])
-
-	useEffect(() => {
-		console.log('re')
-		if (posts.length === 0) {
-			getPosts().then(data => setPosts(data))
-		}
-	}, []);
+	// const [posts, setPosts] = useState([])
+	//
+	// useEffect(() => {
+	// 	console.log('re')
+	// 	if (posts.length === 0) {
+	// 		getPosts().then(data => setPosts(data))
+	// 	}
+	// }, []);
+	// {
+	// 	posts.length
+	// 		? <PostEditorTable posts={posts}/>
+	// 		: <p>Waiting...</p>
+	// }
 
 	return (
-		<Pane>
-			{
-				posts.length
-					? <PostEditorTable posts={posts}/>
-					: <p>Waiting...</p>
-			}
-		</Pane>
-	);
+		<MainRouter>
+
+		</MainRouter>
+	)
 }
 
 export default App;

@@ -1,6 +1,6 @@
 import React, { useState } from "react"
 import PropTypes from "prop-types";
-import { postsType } from "../modules/fetch/api"
+import { postsType } from "~/modules/fetch/api"
 import { TableCreator } from "./table-editor/TableComponent"
 
 PostEditorTable.propTypes = {
