@@ -1,19 +1,25 @@
 import React from "react"
-import { Link, Route, Switch } from "react-router-dom";
-import { PagePostsEditor } from "~/views/posts-editor"
-import { POST_EDITOR } from "~/router"
+import { Button } from "evergreen-ui"
+import { useHistory } from "react-router"
+import { routerPostEditor } from "~/views/posts-editor"
+import { INDEX, GRAPH_TABLE, POST_EDITOR, RenderRoutes } from "~/modules/router"
+import { IndexViewGraphTable } from "~/views/graph-table"
 
-export const PageIndex = () => (
-	<Switch>
-		<Route exact path='/' component={Page}/>
-		<PagePostsEditor />
-	</Switch>
-)
+
+export function routerIndex() {
+	return [
+		{ path: INDEX, key: "ROOT", exact: true, component: Page },
+		routerPostEditor(),
+		{ path: GRAPH_TABLE, key: "GT", component: RenderRoutes, routes: IndexViewGraphTable() },
+	]
+}
 
 function Page() {
+	const history = useHistory()
 	return (
 		<>
-			<Link to={ POST_EDITOR }>Teest</Link>
+			<Button onClick={() => history.push(GRAPH_TABLE)}>GRAPHS</Button>
+			<Button onClick={() => history.push(POST_EDITOR)}>Post Editor Table</Button>
 		</>
 	)
 }
