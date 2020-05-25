@@ -1,15 +1,25 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { Table, Textarea, TextInput, } from "evergreen-ui";
 import DatePicker from "react-datepicker"
 import "react-datepicker/dist/react-datepicker.css";
 
 import { editPost } from "~/modules/fetch/api"
-import { ActionsMenu } from "./ActionsMenu"
+import { useTableContext } from "~/components/table-editor/TableReducer"
+import { ActionsMenu } from "~/components/table-editor/ActionsMenu"
+
 
 const editBtnWidth = { maxWidth: '4rem' }
 
-export function TableCreator({ data, schema }) {
+export function TableCreator({ data, schema, onSave }) {
+	// TODO: validate all table-editor
 	const [editingRowID, setEditingRowID] = useState(null)
+
+	const { state, dispatch } = useTableContext()
+
+	useEffect(() => {
+		dispatch({schema, data, onSave})
+	}, [data])
+
 	return (
 		<Table>
 			<Table.Head>
@@ -35,7 +45,8 @@ export function TableCreator({ data, schema }) {
 					data.map(rowData => {
 						const editing = rowData.id === editingRowID
 						return (
-							<Row rowData={rowData} schema={schema} editing={editing} setEditingRowID={setEditingRowID}/>
+							<Row rowData={rowData} schema={schema} editing={editing}
+							     setEditingRowID={setEditingRowID}/>
 						)
 					})
 				}

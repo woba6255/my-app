@@ -3,6 +3,13 @@ const path = require('path')
 module.exports = {
 	webpack: function(config, env) {
 		config.resolve.alias['~'] = path.resolve(__dirname, 'src')
+		// config.resolve.alias['@module'] = path.resolve(__dirname, 'src', 'modules')
+		// config.resolve.alias['@component'] = path.resolve(__dirname, 'src', 'components')
+		// config.resolve.alias['@view'] = path.resolve(__dirname, 'src', 'views')
+		//,
+		//       "@module/*": ["./src/modules/*"],
+		//       "@component/*": ["./src/components/*"],
+		//       "@view/*": ["./src/views/*"]
 		return config
 		// return Object.assign({}, config, {
 		// 	resolve: {

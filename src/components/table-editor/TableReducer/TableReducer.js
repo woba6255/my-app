@@ -3,16 +3,18 @@ import { UPDATE } from "./TableReducerActions"
 const defaultValue = {}
 
 const TableReducer = (state, action) => {
-	switch (action.type) {
+	const type = action.type || UPDATE
+	const payload = action.payload || action
+	switch (type) {
 		case UPDATE:
 			return {
 				...state,
-				...action.payload
+				...payload
 			}
 		// case 'name':
 		// 	return {
 		// 		...state,
-		// 		name: action.payload,
+		// 		name: payload,
 		// 	}
 		// case 'age':
 		// 	return {

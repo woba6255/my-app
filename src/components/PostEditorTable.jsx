@@ -1,7 +1,7 @@
 import React, { useState } from "react"
 import PropTypes from "prop-types";
 import { postsType } from "~/modules/fetch/api"
-import { TableCreator } from "./table-editor/TableComponent"
+import { TableEditor } from "~/components/table-editor"
 
 PostEditorTable.propTypes = {
 	posts: postsType,
@@ -14,7 +14,7 @@ export function PostEditorTable(props) {
 	const [posts, setPosts] = useState(props.posts)
 
 	return (
-		<TableCreator
+		<TableEditor
 			data={posts}
 			schema={{
 				body: [
