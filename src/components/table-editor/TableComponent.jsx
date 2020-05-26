@@ -4,8 +4,16 @@ import DatePicker from "react-datepicker"
 import "react-datepicker/dist/react-datepicker.css";
 
 import { editPost } from "~/modules/fetch/api"
-import { useTableContext } from "~/components/table-editor/TableReducer"
+import { TABLE_REDUCER_UPDATE_ROW_BY_ID, useTableContext } from "~/components/table-editor/TableReducer"
 import { ActionsMenu } from "~/components/table-editor/ActionsMenu"
+import {
+	CELL_ROLE_DATE,
+	CELL_ROLE_ID,
+	CELL_ROLE_INPUT,
+	CELL_ROLE_STATIC,
+	CELL_ROLE_TEXT_AREA
+} from "~/components/table-editor/CellRoles"
+import { element } from "prop-types"
 
 
 const editBtnWidth = { maxWidth: '4rem' }
@@ -13,54 +21,56 @@ const editBtnWidth = { maxWidth: '4rem' }
 export function TableCreator({ data, schema, onSave }) {
 	// TODO: validate all table-editor
 	const [editingRowID, setEditingRowID] = useState(null)
-
 	const { state, dispatch } = useTableContext()
 
 	useEffect(() => {
-		dispatch({schema, data, onSave})
+		dispatch({ schema, data, onSave })
 	}, [data])
 
 	return (
-		<Table>
-			<Table.Head>
-				{
-					schema.body.map((tableColumn, i) => (
-						<Table.TextHeaderCell
-							style={tableColumn.styles}
-							key={i}
-						>
-							{
-								tableColumn.header
-							}
-						</Table.TextHeaderCell>
-					))
-				}
-				<Table.TextHeaderCell
-					style={editBtnWidth}
-				>
-				</Table.TextHeaderCell>
-			</Table.Head>
-			<Table.Body style={{ overflowY: 'scroll' }}>
-				{
-					data.map(rowData => {
-						const editing = rowData.id === editingRowID
-						return (
-							<Row rowData={rowData} schema={schema} editing={editing}
-							     setEditingRowID={setEditingRowID}/>
-						)
-					})
-				}
-			</Table.Body>
-		</Table>
+		state.data
+			? <Table>
+				<Table.Head>
+					{
+						schema.body.map((tableColumn, i) => (
+							<Table.TextHeaderCell
+								style={tableColumn.styles}
+								key={i}
+							>
+								{
+									tableColumn.header
+								}
+							</Table.TextHeaderCell>
+						))
+					}
+					<Table.TextHeaderCell
+						style={editBtnWidth}
+					>
+					</Table.TextHeaderCell>
+				</Table.Head>
+				<Table.Body style={{ overflowY: 'scroll' }}>
+					{
+						state.data && state.data.map(row => {
+							const editing = row.id === editingRowID
+							return (
+								<Row rowID={row.id} schema={schema} editing={editing}
+								     setEditingRowID={setEditingRowID}/>
+							)
+						})
+					}
+				</Table.Body>
+			</Table>
+			: <p>No data...</p>
 	)
 }
 
 
-function Row({ rowData, schema, editing, setEditingRowID }) {
-	const [rowState, setRowState] = useState(rowData)
+function Row({ rowID, schema, editing, setEditingRowID }) {
+	const { state, dispatch } = useTableContext()
+	const [rowState, setRowState] = useState(state.data.find(row => row.id === rowID))
 
 	function back() {
-		setRowState(rowData)
+		setRowState(rowState)
 		setEditingRowID(null)
 	}
 
@@ -70,7 +80,7 @@ function Row({ rowData, schema, editing, setEditingRowID }) {
 				// Будет ли рендерильник это оптимизировать? Думаю нет.
 				schema.body.map(cellSchema => {
 					return (
-						<TableCell rowState={rowState} setRowState={setRowState} cellSchema={cellSchema}
+						<TableCell rowID={rowID} cellSchema={cellSchema}
 						           editing={editing}/>
 					)
 				})
@@ -104,7 +114,7 @@ function Row({ rowData, schema, editing, setEditingRowID }) {
 							{
 								icon: "edit", title: 'Edit',
 								color: "muted", style: { cursor: "pointer" },
-								onSelect: () => setEditingRowID(rowData.id)
+								onSelect: () => setEditingRowID(rowState.id)
 							},
 						]
 					}
@@ -114,23 +124,27 @@ function Row({ rowData, schema, editing, setEditingRowID }) {
 	)
 }
 
-function TableCell({ cellSchema, rowState, setRowState, editing }) {
+function TableCell({ cellSchema, rowID, editing }) {
+	const { state, dispatch } = useTableContext()
+	const [cellState, setCellState] = useState();
 	const role = cellSchema.role
 	const formater = cellSchema.formater
+	const rowState = state.data.find(e => e.id === rowID)
 	const cellState = rowState[cellSchema.key]
 	const value = formater
 		? formater(cellState)
 		: cellState
+	console.log('R')
 
 	function onChange(e) {
 		const newValue = Object.assign({}, rowState)
 		newValue[cellSchema.key] = e.target.value
-		setRowState(newValue)
+		dispatch({ type: TABLE_REDUCER_UPDATE_ROW_BY_ID, payload: newValue })
 	}
 
 	switch (role) {
-		case 'id':
-		case 'static':
+		case CELL_ROLE_ID:
+		case CELL_ROLE_STATIC:
 			return (
 				<Table.TextCell
 					style={cellSchema.styles}
@@ -140,7 +154,7 @@ function TableCell({ cellSchema, rowState, setRowState, editing }) {
 					}
 				</Table.TextCell>
 			)
-		case "input":
+		case CELL_ROLE_INPUT:
 			return (
 				<Table.TextCell
 					style={cellSchema.styles}
@@ -158,7 +172,7 @@ function TableCell({ cellSchema, rowState, setRowState, editing }) {
 					}
 				</Table.TextCell>
 			)
-		case "dateArea":
+		case CELL_ROLE_TEXT_AREA:
 			return (
 				<Table.TextCell
 					style={cellSchema.styles}
@@ -181,7 +195,7 @@ function TableCell({ cellSchema, rowState, setRowState, editing }) {
 
 				</Table.TextCell>
 			)
-		case "date":
+		case CELL_ROLE_DATE:
 			return (
 				<Table.TextCell
 					style={cellSchema.styles}
@@ -194,7 +208,8 @@ function TableCell({ cellSchema, rowState, setRowState, editing }) {
 									onChange={date => {
 										const newValue = Object.assign({}, rowState)
 										newValue[cellSchema.key] = date
-										setRowState(newValue)
+										dispatch({ type: TABLE_REDUCER_UPDATE_ROW_BY_ID, payload: newValue })
+
 									}}
 									customInput={<DateInput date={value} onChange={onChange}/>}
 									timeFormat="HH:mm"
@@ -215,6 +230,18 @@ function TableCell({ cellSchema, rowState, setRowState, editing }) {
 				</Table.TextCell>
 			)
 	}
+}
+
+function getRowState(state, schema, rowID) {
+	return findByID(state.data, )
+}
+
+function getKeyFromIDRole(schema) {
+	return schema.find(element => element.role === CELL_ROLE_ID)
+}
+
+function findByID(data, key, ID) {
+	return data.find(element => element[key] === ID)
 }
 
 function DateInput({ date, onClick, onChange }) {

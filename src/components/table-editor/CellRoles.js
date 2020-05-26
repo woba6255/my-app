@@ -1,0 +1,5 @@
+export const CELL_ROLE_ID = 'ID'
+export const CELL_ROLE_STATIC = 'STATIC'
+export const CELL_ROLE_INPUT = 'INPUT'
+export const CELL_ROLE_TEXT_AREA = 'TEXT_AREA'
+export const CELL_ROLE_DATE = 'DATE'
