@@ -1,19 +1,21 @@
 import React, { useEffect, useState } from "react"
 import { Button, Table, } from "evergreen-ui";
 import "react-datepicker/dist/react-datepicker.css";
-import { TABLE_REDUCER_CREATE_ROW, useTableContext } from "~/components/table-editor/TableReducer"
+import { useTableContext } from "~/components/table-editor/TableReducer"
 import { Row } from "~/components/table-editor/TableRow"
 import { editBtnWidth } from "~/components/table-editor/ActionsMenu"
+import { ROW_STATUS_EDIT, ROW_STATUS_STATIC } from "~/components/table-editor/TableAliases"
 
 
 export function TableCreator({ data, schema }) {
 	// TODO: validate all table-editor
-	const [editingRowID, setEditingRowID] = useState(null)
+	const [editingRow, setEditingRow] = useState(null)
 	const { state, dispatch } = useTableContext()
 
 	useEffect(() => {
 		dispatch({ schema, data })
 	}, [data])
+
 
 	return (
 		state.data
@@ -40,10 +42,11 @@ export function TableCreator({ data, schema }) {
 					<Table.Body style={{ overflowY: 'scroll' }}>
 						{
 							state.data && state.data.map(row => {
-								const editing = row.id === editingRowID
+								// TODO HOT
+								const rowStatus = (editingRow && row.id === editingRow.id) ? editingRow.status : ROW_STATUS_STATIC
 								return (
-									<Row rowID={row.id} schema={schema} editing={editing}
-									     setEditingRowID={setEditingRowID}/>
+									<Row rowID={row.id} schema={schema} rowStatus={rowStatus}
+									     setEditingRow={setEditingRow}/>
 								)
 							})
 						}

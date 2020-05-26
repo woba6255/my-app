@@ -5,7 +5,7 @@ import { TableCell } from "~/components/table-editor/TableCell"
 import { ActionsMenu, editBtnWidth } from "~/components/table-editor/ActionsMenu"
 import { ROW_STATUS_CREATED, ROW_STATUS_EDIT, ROW_STATUS_STATIC } from "~/components/table-editor/TableAliases"
 
-export function Row({ rowID, schema, editing, setEditingRowID }) {
+export function Row({ rowID, schema, rowStatus, setEditingRow }) {
 	const { state, dispatch } = useTableContext()
 	const { eventsMiddleware } = state.schema
 	const [rowState, setRowState] = useState(getRowStateFromTableState())
@@ -14,43 +14,40 @@ export function Row({ rowID, schema, editing, setEditingRowID }) {
 		return state.data.find(row => row.id === rowID)
 	}
 
-
-	const rowStatus = editing ? ROW_STATUS_EDIT : ROW_STATUS_STATIC
-
 	// Emit on row lvl
-	const emit = {
+	const rowActions = {
 		back() {
 			setRowState(getRowStateFromTableState())
-			setEditingRowID(null)
+			setEditingRow(null)
 		},
 		edit() {
-			setEditingRowID(rowID)
+			setEditingRow({id: rowID, status: ROW_STATUS_EDIT})
 		},
 		cancel() {
-			setEditingRowID(null)
+			setEditingRow(null)
 		},
 		async save() {
-			setEditingRowID(null)
+			setEditingRow(null)
 			const middlewareResponse = await eventsMiddleware.onSave(rowState)
 			if(middlewareResponse) {
 				dispatch({type: TABLE_REDUCER_SAVE_ROW, payload: middlewareResponse})
 			}
 		},
 	}
-
+	
 	const menuItems = []
 	if (rowStatus === ROW_STATUS_EDIT) menuItems.push(...[
 		{
 			icon: "tick-circle", title: 'Save',
-			onSelect: () => emit.save()
+			onSelect: () => rowActions.save()
 		},
 		{
 			icon: "arrow-left", title: 'Return',
-			onSelect: () => emit.back()
+			onSelect: () => rowActions.back()
 		},
 		{
 			icon: "cross", title: 'Cancel',
-			onSelect: () => emit.cancel()
+			onSelect: () => rowActions.cancel()
 		}
 	])
 	else if (rowStatus === ROW_STATUS_CREATED) menuItems.push(...[])
@@ -58,7 +55,7 @@ export function Row({ rowID, schema, editing, setEditingRowID }) {
 		{
 			icon: "edit", title: 'Edit',
 			color: "muted", style: { cursor: "pointer" },
-			onSelect: () => emit.edit()
+			onSelect: () => rowActions.edit()
 		},
 	])
 

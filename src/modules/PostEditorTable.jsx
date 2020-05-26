@@ -53,5 +53,5 @@ function dateFormater(date) {
 }
 
 function idFormater(id) {
-	return id.length < 6 ? '...' + id.slice(id.length - 6) : id
+	return id.length > 6 ? '...' + id.slice(id.length - 6) : id
 }
