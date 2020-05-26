@@ -2,7 +2,7 @@ import React, { useState } from "react"
 import PropTypes from "prop-types";
 import { postsType } from "~/modules/fetch/api"
 import { TableEditor } from "~/components/table-editor"
-import { CELL_ROLE_DATE, CELL_ROLE_ID, CELL_ROLE_INPUT } from "~/components/table-editor/CellRoles"
+import { CELL_ROLE_DATE, CELL_ROLE_ID, CELL_ROLE_INPUT } from "~/components/table-editor/TableCellRoles"
 
 PostEditorTable.propTypes = {
 	posts: postsType,
@@ -17,6 +17,7 @@ export function PostEditorTable(props) {
 	return (
 		<TableEditor
 			data={posts}
+			onSave={(data) => setPosts(data)}
 			schema={{
 				body: [
 					{ header: '#', styles: idWidth, key: 'id', role: CELL_ROLE_ID, formater: (id) => idFormater(id) },

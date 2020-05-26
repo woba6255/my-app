@@ -5,6 +5,8 @@ ActionsMenu.propTypes = {
 	menuItems: PropTypes.array.isRequired
 }
 
+export const editBtnWidth = { maxWidth: '4rem' }
+
 export function ActionsMenu({ menuItems }) {
 	// TODO: refactor
 	return <Popover

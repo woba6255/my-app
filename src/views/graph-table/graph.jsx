@@ -1,5 +1,4 @@
 import React from "react"
-import { Route } from "react-router-dom";
 import { ROUTE_CREATE_GRAPH_FROM_GRAPH_TABLE } from "~/modules/router"
 import { useHistory } from "react-router"
 
