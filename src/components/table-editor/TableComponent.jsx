@@ -15,14 +15,6 @@ export function TableCreator({ data, schema }) {
 		dispatch({ schema, data })
 	}, [data])
 
-	function createNewRow() {
-		dispatch({ type: TABLE_REDUCER_CREATE_ROW, payload: {
-				id: Math.random().toString(36).substring(7),
-				date: new Date()
-
-			}})
-	}
-
 	return (
 		state.data
 			? <div>
@@ -57,7 +49,7 @@ export function TableCreator({ data, schema }) {
 						}
 					</Table.Body>
 				</Table>
-				<Button onClick={createNewRow}>???</Button>
+				<Button onClick={() => console.log('hh')}>???</Button>
 			</div>
 			: <p>No data...</p>
 	)

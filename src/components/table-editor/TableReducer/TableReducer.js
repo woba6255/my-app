@@ -1,4 +1,4 @@
-import { TABLE_REDUCER_CREATE_ROW, TABLE_REDUCER_UPDATE, TABLE_REDUCER_UPDATE_ROW_BY_ID } from "./TableReducerActions"
+import { TABLE_REDUCER_CREATE_ROW, TABLE_REDUCER_UPDATE, TABLE_REDUCER_SAVE_ROW } from "./TableReducerActions"
 
 const defaultValue = {}
 
@@ -12,7 +12,7 @@ const TableReducer = (state, action) => {
 				...payload
 			}
 		}
-		case TABLE_REDUCER_UPDATE_ROW_BY_ID: {
+		case TABLE_REDUCER_SAVE_ROW: {
 			const { id } = payload
 			const data = Object.assign([], state.data)
 			const index = data.findIndex((element) => {

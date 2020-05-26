@@ -1,28 +1,67 @@
 import React, { useState } from "react"
 import { Table } from "evergreen-ui"
-import { useTableContext } from "~/components/table-editor/TableReducer"
+import { TABLE_REDUCER_SAVE_ROW, useTableContext } from "~/components/table-editor/TableReducer"
 import { TableCell } from "~/components/table-editor/TableCell"
 import { ActionsMenu, editBtnWidth } from "~/components/table-editor/ActionsMenu"
+import { ROW_STATUS_CREATED, ROW_STATUS_EDIT, ROW_STATUS_STATIC } from "~/components/table-editor/TableAliases"
 
 export function Row({ rowID, schema, editing, setEditingRowID }) {
 	const { state, dispatch } = useTableContext()
+	const { eventsMiddleware } = state.schema
 	const [rowState, setRowState] = useState(getRowStateFromTableState())
 
 	function getRowStateFromTableState() {
 		return state.data.find(row => row.id === rowID)
 	}
 
-	function onSave() {
-		state.schema.eventsMiddleware.onSave(rowState)
-		setEditingRowID(null)
+
+	const rowStatus = editing ? ROW_STATUS_EDIT : ROW_STATUS_STATIC
+
+	// Emit on row lvl
+	const emit = {
+		back() {
+			setRowState(getRowStateFromTableState())
+			setEditingRowID(null)
+		},
+		edit() {
+			setEditingRowID(rowID)
+		},
+		cancel() {
+			setEditingRowID(null)
+		},
+		async save() {
+			setEditingRowID(null)
+			const middlewareResponse = await eventsMiddleware.onSave(rowState)
+			if(middlewareResponse) {
+				dispatch({type: TABLE_REDUCER_SAVE_ROW, payload: middlewareResponse})
+			}
+		},
 	}
 
-	function onBack() {
-		setRowState(getRowStateFromTableState())
-		setEditingRowID(null)
-	}
+	const menuItems = []
+	if (rowStatus === ROW_STATUS_EDIT) menuItems.push(...[
+		{
+			icon: "tick-circle", title: 'Save',
+			onSelect: () => emit.save()
+		},
+		{
+			icon: "arrow-left", title: 'Return',
+			onSelect: () => emit.back()
+		},
+		{
+			icon: "cross", title: 'Cancel',
+			onSelect: () => emit.cancel()
+		}
+	])
+	else if (rowStatus === ROW_STATUS_CREATED) menuItems.push(...[])
+	else if (rowStatus === ROW_STATUS_STATIC) menuItems.push(...[
+		{
+			icon: "edit", title: 'Edit',
+			color: "muted", style: { cursor: "pointer" },
+			onSelect: () => emit.edit()
+		},
+	])
 
-	console.log(state)
 
 	return (
 		<Table.Row height={'auto'} style={{ minHeight: '45px' }}>
@@ -30,11 +69,13 @@ export function Row({ rowID, schema, editing, setEditingRowID }) {
 				schema.body.map(cellSchema => {
 					const { key } = cellSchema
 					const cellState = rowState[key]
+					const editing = rowStatus !== ROW_STATUS_STATIC
 					function onCellChange(newCellValue) {
 						const newRowValue = Object.assign({}, rowState)
 						newRowValue[key] = newCellValue
 						setRowState(newRowValue)
 					}
+
 					return (
 						<TableCell cellState={cellState} onCellChange={onCellChange} cellSchema={cellSchema}
 						           editing={editing}/>
@@ -43,38 +84,7 @@ export function Row({ rowID, schema, editing, setEditingRowID }) {
 			}
 
 			<Table.Cell style={editBtnWidth}>
-				<ActionsMenu menuItems={[
-					{
-						on: editing === true, items: [
-							{
-								icon: "tick-circle", title: 'Save',
-								onSelect: () => {
-									console.log('sd')}
-							},
-							{
-								icon: "arrow-left", title: 'Return',
-								onSelect: onBack
-							},
-							{
-								icon: "arrow-right", title: 'Return Return? ',
-								onSelect: onBack
-							},
-							{
-								icon: "cross", title: 'Cancel',
-								onSelect: () => setEditingRowID(null)
-							}
-						]
-					},
-					{
-						on: editing === false, items: [
-							{
-								icon: "edit", title: 'Edit',
-								color: "muted", style: { cursor: "pointer" },
-								onSelect: () => setEditingRowID(rowData.id)
-							},
-						]
-					}
-				]}/>
+				<ActionsMenu menuItems={menuItems}/>
 			</Table.Cell>
 		</Table.Row>
 	)

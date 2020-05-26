@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react"
 import { Button } from "evergreen-ui"
 import { useHistory } from "react-router"
-import { getPosts } from "~/modules/fetch/api"
+import { PostsManger } from "~/modules/fetch/api"
 import { PostEditorTable } from "~/modules/PostEditorTable"
 import { ROUTE_INDEX, ROUTE_POST_EDITOR } from "~/modules/router"
 
@@ -15,7 +15,7 @@ function Page () {
 
 	useEffect(() => {
 		if (posts.length === 0) {
-			getPosts().then(data => setPosts(data))
+			PostsManger.getAll().then(data => setPosts(data))
 		}
 	}, []);
 

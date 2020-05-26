@@ -18,10 +18,10 @@ export function ActionsMenu({ menuItems }) {
 				<Menu.Group>
 					{
 						// TODO: Refactor ActionsMenu
-						menuItems.map(
-							<Menu.Item>
+						menuItems.map(item =>
+							<Menu.Item {...item} key={item.title}>
 								{
-									'TETS'
+									item.title
 								}
 							</Menu.Item>
 						)
