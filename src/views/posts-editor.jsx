@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react"
 import { Button } from "evergreen-ui"
 import { useHistory } from "react-router"
 import { getPosts } from "~/modules/fetch/api"
-import { PostEditorTable } from "~/components/PostEditorTable"
+import { PostEditorTable } from "~/modules/PostEditorTable"
 import { ROUTE_INDEX, ROUTE_POST_EDITOR } from "~/modules/router"
 
 export function routerPostEditor (){

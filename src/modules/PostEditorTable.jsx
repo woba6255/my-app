@@ -1,8 +1,14 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import PropTypes from "prop-types";
-import { postsType } from "~/modules/fetch/api"
+import { createPost, deletePostByID, editPost, postsType } from "~/modules/fetch/api"
 import { TableEditor } from "~/components/table-editor"
-import { CELL_ROLE_DATE, CELL_ROLE_ID, CELL_ROLE_INPUT } from "~/components/table-editor/TableCellRoles"
+import {
+	CELL_ROLE_DATE,
+	CELL_ROLE_ID,
+	CELL_ROLE_INPUT,
+	ROW_STATUS_EDIT,
+	ROW_STATUS_STATIC
+} from "~/components/table-editor/TableAliases"
 
 PostEditorTable.propTypes = {
 	posts: postsType,
@@ -11,14 +17,34 @@ PostEditorTable.propTypes = {
 
 const idWidth = { maxWidth: '5rem' }
 
-export function PostEditorTable(props) {
-	const [posts, setPosts] = useState(props.posts)
+export function PostEditorTable({posts}) {
+	// const [posts, setPosts] = useState(props.posts)
 
+	// TODO REFACTOR:
+	function onSave(data) {
+		editPost(data).then((r) => {
+			if (JSON.stringify(r) === '{}') {
+				createPost(data).then(() => alert('Created!'))
+			} else {
+				alert('Saved!')
+			}
+		})
+	}
+
+	function onDelete(ID) {
+		deletePostByID(ID).then(r => alert('DELETED!'))
+	}
+
+	let onCreate = () => 's'
 	return (
 		<TableEditor
 			data={posts}
-			onSave={(data) => setPosts(data)}
 			schema={{
+				eventsMiddleware: {
+					onSave,
+					onDelete,
+					onCreate,
+				},
 				body: [
 					{ header: '#', styles: idWidth, key: 'id', role: CELL_ROLE_ID, formater: (id) => idFormater(id) },
 					{ header: 'Date', key: 'date', role: CELL_ROLE_DATE, formater: (date) => dateFormater(date) },

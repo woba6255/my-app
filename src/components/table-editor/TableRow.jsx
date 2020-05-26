@@ -13,9 +13,7 @@ export function Row({ rowID, schema, editing, setEditingRowID }) {
 	}
 
 	function onSave() {
-		const tableState = Object.assign([], state.data)
-		tableState[tableState.findIndex(e => e.id === rowID)] = rowState
-		state.onSave(tableState)
+		state.schema.eventsMiddleware.onSave(rowState)
 		setEditingRowID(null)
 	}
 
@@ -23,6 +21,8 @@ export function Row({ rowID, schema, editing, setEditingRowID }) {
 		setRowState(getRowStateFromTableState())
 		setEditingRowID(null)
 	}
+
+	console.log(state)
 
 	return (
 		<Table.Row height={'auto'} style={{ minHeight: '45px' }}>
@@ -45,15 +45,18 @@ export function Row({ rowID, schema, editing, setEditingRowID }) {
 			<Table.Cell style={editBtnWidth}>
 				<ActionsMenu menuItems={[
 					{
-						// TODO: Refactor ActionsMenu ("on" ...)
 						on: editing === true, items: [
 							{
 								icon: "tick-circle", title: 'Save',
-								// TODO: Fix hardcor editPost ♿
-								onSelect: onSave
+								onSelect: () => {
+									console.log('sd')}
 							},
 							{
 								icon: "arrow-left", title: 'Return',
+								onSelect: onBack
+							},
+							{
+								icon: "arrow-right", title: 'Return Return? ',
 								onSelect: onBack
 							},
 							{
@@ -67,7 +70,7 @@ export function Row({ rowID, schema, editing, setEditingRowID }) {
 							{
 								icon: "edit", title: 'Edit',
 								color: "muted", style: { cursor: "pointer" },
-								onSelect: () => setEditingRowID(rowState.id)
+								onSelect: () => setEditingRowID(rowData.id)
 							},
 						]
 					}

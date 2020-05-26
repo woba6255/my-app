@@ -7,7 +7,7 @@ import {
 	CELL_ROLE_INPUT,
 	CELL_ROLE_STATIC,
 	CELL_ROLE_TEXT_AREA
-} from "~/components/table-editor/TableCellRoles"
+} from "~/components/table-editor/TableAliases"
 
 
 export function TableCell({ cellSchema, cellState, onCellChange, editing }) {

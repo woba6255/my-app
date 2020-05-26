@@ -1,6 +1,6 @@
 import ftch from '../index'
 import PropTypes from "prop-types";
-import { config } from '../../../config'
+import { config } from '~/config'
 
 
 export const postType = PropTypes.shape({
@@ -17,6 +17,16 @@ export const postsType = PropTypes.arrayOf(postType)
 export async function getPosts() {
 	// TODO validate
 	return await ftch.GET(config.postsUrl)
+}
+
+export async function createPost(data) {
+	// TODO validate
+	return await ftch.POST(config.postsUrl, data)
+}
+
+export async function deletePostByID(ID) {
+	// TODO validate
+	return await ftch.DELETE(config.postsUrl + '/' + ID)
 }
 
 export async function editPost(newValue, ID = newValue.id) {

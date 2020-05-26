@@ -1,6 +1,7 @@
 import { Menu, MoreIcon, Popover, Position } from "evergreen-ui"
 import React from "react"
 import PropTypes from "prop-types"
+
 ActionsMenu.propTypes = {
 	menuItems: PropTypes.array.isRequired
 }
@@ -17,15 +18,12 @@ export function ActionsMenu({ menuItems }) {
 				<Menu.Group>
 					{
 						// TODO: Refactor ActionsMenu
-						menuItems.map(items =>
-							items.on === true
-							&& items.items.map(item =>
-								<Menu.Item {...item} key={item.title}>
-									{
-										item.title
-									}
-								</Menu.Item>
-							)
+						menuItems.map(
+							<Menu.Item>
+								{
+									'TETS'
+								}
+							</Menu.Item>
 						)
 					}
 				</Menu.Group>
