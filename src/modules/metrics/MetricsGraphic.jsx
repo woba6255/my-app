@@ -2,31 +2,31 @@ import React, { createRef, useEffect } from "react"
 import Chart from 'chart.js'
 
 
-export function MetricsGraphic(props) {
+export function MetricsGraphic({metrics}) {
 	const ref = createRef()
-	console.log(ref)
+
 	useEffect(() => {
-		// const labels
+		const labels = metrics.map((e) => e.date)
+		const data = metrics.map((e) => e.temperature)
 		const chart = new Chart(ref.current.getContext('2d'), {
 			type: "line",
 			data: {
-				labels: ["Jan", "Feb", "March"],
+				labels: labels,
 				datasets: [
 					{
 						label: "Temperature",
-						data: [86, 67, 91],
+						data: data,
 					}
 				]
 			},
-			options: {
-				//Customize chart options
-			}
+			options: {}
 		})
-	}, [props.metrics]);
-
+	}, [metrics])
 
 
 	return (
-		<canvas id="myChart" ref={ref} width="400" height="400"/>
+		<div style={{width: '50rem', position: 'relative',}}>
+			<canvas id="myChart" ref={ref}/>
+		</div>
 	)
 }

@@ -5,11 +5,11 @@ import { TABLE_CELL_ROLE_DATE, TABLE_CELL_ROLE_INPUT } from "~/components/table-
 
 const width = { maxWidth: '5rem' }
 
-export function schema (){
+export function schema ({ setMetrics }){
 	return {
 		eventsMiddleware: {
 			onStableStateChange(tableData) {
-				console.log(tableData)
+				setMetrics(tableData)
 			},
 			onSave: (data) => {
 				MetricsManager.editOne(data).then(r => console.log('Saved!'))

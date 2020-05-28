@@ -7,7 +7,7 @@ import { schema } from "~/modules/metrics/TableSchema"
 export function MetricsTable(props) {
 
 	return (
-		<div style={{maxWidth: '500px'}}>
+		<div style={{minWidth: '500px'}}>
 			{
 				props.metrics.length
 					? <TableEditor
