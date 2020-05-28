@@ -1,14 +1,14 @@
 import React, { useState } from "react"
 import { DotIcon, Table } from "evergreen-ui"
-import { useTableContext } from "~/components/table-editor/TableReducer"
-import { TableCell } from "~/components/table-editor/TableCell"
-import { ActionsMenu, editBtnWidth } from "~/components/table-editor/ActionsMenu"
+import { useTableContext } from "./TableReducer"
+import { TableCell } from "./TableCell"
+import { ActionsMenu, editBtnWidth } from "./ActionsMenu"
 import {
 	TABLE_ROW_STATUS_CREATED,
 	TABLE_ROW_STATUS_EDIT,
 	TABLE_ROW_STATUS_STATIC, TABLE_ROW_STATUS_STATIC_DISABLED,
 	TABLE_REDUCER_DELETE_ROW, TABLE_REDUCER_SAVE_ROW, TABLE_REDUCER_DELETE_CREATE_ROW
-} from "~/components/table-editor/TableAliases"
+} from "./TableAliases"
 
 export function Row({ rowID, schema, rowStatus, setEditingRow }) {
 	const { state, dispatch } = useTableContext()

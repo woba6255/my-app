@@ -1,6 +1,7 @@
 import React from 'react';
-import { ProviderTableContext } from "~/components/table-editor/TableReducer"
-import { TableCreator } from "~/components/table-editor/TableComponent"
+import { ProviderTableContext } from "./TableReducer"
+import { TableCreator } from "./TableComponent"
+export * from './TableAliases'
 
 export function TableEditor(props) {
 	return (

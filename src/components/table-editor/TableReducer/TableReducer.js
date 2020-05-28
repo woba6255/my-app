@@ -3,7 +3,7 @@ import {
 	TABLE_REDUCER_DELETE_ROW,
 	TABLE_REDUCER_SAVE_ROW,
 	TABLE_REDUCER_UPDATE
-} from "~/components/table-editor/TableAliases"
+} from "../TableAliases"
 
 
 const defaultValue = {}
@@ -80,7 +80,7 @@ const TableReducer = (state, action) => {
 
 
 		function stableStateChangeEmitter(toSave) {
-			if (state.schema && state.schema.eventsMiddleware.onStableStateChange) state.schema.eventsMiddleware.onStableStateChange(toSave)
+			if (state.schema && state.schema.eventsMiddleware.onStableStateChange) state.schema.eventsMiddleware.onStableStateChange(toSave.data)
 			return toSave
 		}
 	}

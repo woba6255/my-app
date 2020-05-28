@@ -1,4 +1,4 @@
-import { TABLE_CELL_ROLE_ID } from "~/components/table-editor/TableAliases"
+import { TABLE_CELL_ROLE_ID } from "./TableAliases"
 
 /**  HELPERS  **/
 

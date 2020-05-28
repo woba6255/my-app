@@ -3,8 +3,7 @@ import { ROUTE_CREATE_GRAPH_FROM_METRICS, ROUTE_INDEX, ROUTE_METRICS } from "~/m
 import { Button } from "evergreen-ui"
 import { useHistory } from "react-router"
 import { routerGraph } from "~/views/metrics/graph"
-import { MetricsManager } from "~/modules/fetch/api"
-import { MetricsTable } from "~/modules/MetricsTable"
+import { Metrics } from "~/modules/metrics/Metrics"
 
 export function IndexViewGraphTable() {
 	return [
@@ -14,24 +13,12 @@ export function IndexViewGraphTable() {
 }
 
 function Page() {
-	const [posts, setPosts] = useState([])
 	const history = useHistory()
 
-	useEffect(() => {
-		if (posts.length === 0) {
-			MetricsManager.getAll().then(data => setPosts(data))
-		}
-	}, []);
 
 	return (
 		<>
-			<div style={{maxWidth: '600px'}}>
-				{
-					posts.length
-						? <MetricsTable posts={posts}/>
-						: <p>Waiting...</p>
-				}
-			</div>
+			<Metrics/>
 
 			<p>{ROUTE_METRICS}</p>
 			<Button

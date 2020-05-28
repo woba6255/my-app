@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react"
 import { AddIcon, Button, Pane, Table, } from "evergreen-ui";
 import "react-datepicker/dist/react-datepicker.css";
-import { useTableContext } from "~/components/table-editor/TableReducer"
-import { Row } from "~/components/table-editor/TableRow"
-import { editBtnWidth } from "~/components/table-editor/ActionsMenu"
+import { useTableContext } from "./TableReducer"
+import { Row } from "./TableRow"
+import { editBtnWidth } from "./ActionsMenu"
 import {
 	TABLE_ROW_STATUS_CREATED,
 	TABLE_ROW_STATUS_STATIC,
 	TABLE_ROW_STATUS_STATIC_DISABLED, TABLE_REDUCER_CREATE_ROW
-} from "~/components/table-editor/TableAliases"
+} from "./TableAliases"
 
 
 export function TableCreator({ data, schema }) {
@@ -19,7 +19,7 @@ export function TableCreator({ data, schema }) {
 
 	useEffect(() => {
 		dispatch({ schema, data })
-	}, [data, schema])
+	}, [])
 
 	// Emit on row lvl
 	const tableActions = {

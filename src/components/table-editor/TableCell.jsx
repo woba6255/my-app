@@ -7,10 +7,10 @@ import {
 	TABLE_CELL_ROLE_INPUT,
 	TABLE_CELL_ROLE_STATIC,
 	TABLE_CELL_ROLE_TEXT_AREA
-} from "~/components/table-editor/TableAliases"
+} from "./TableAliases"
 
 
-export function TableCell({ cellSchema, cellState, onCellChange, editing }) {
+export function TableCell({ cellSchema, cellState = '', onCellChange, editing }) {
 	const { role, styles, formater } = cellSchema
 	const value =
 		formater
@@ -122,13 +122,23 @@ function RoleDate(props) {
 }
 
 
-function DateInput({ date, onClick, onChange }) {
-	return (
-		<TextInput
-			onClick={onClick}
-			onChange={(e) => onChange(e)}
-			value={date}
-		/>
-	)
+
+class DateInput extends React.Component {
+	render() {
+		return (
+			<TextInput
+				onClick={this.props.onClick}
+				onChange={(e) => this.props.onChange(e)}
+				value={this.props.date}
+			/>
+		)
+	}
 }
+
+
+// class DateInput({ date, onClick, onChange }) {
+// 	return (
+//
+// 	)
+// }
 
