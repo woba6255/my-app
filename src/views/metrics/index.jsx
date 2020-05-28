@@ -26,11 +26,11 @@ function Page() {
 			>
 				To Home
 			</Button>
-			<Button
-				onClick={() => history.push(ROUTE_CREATE_GRAPH_FROM_METRICS)}
-			>
-				To {ROUTE_CREATE_GRAPH_FROM_METRICS}
-			</Button>
+			{/*<Button*/}
+			{/*	onClick={() => history.push(ROUTE_CREATE_GRAPH_FROM_METRICS)}*/}
+			{/*>*/}
+			{/*	To {ROUTE_CREATE_GRAPH_FROM_METRICS}*/}
+			{/*</Button>*/}
 		</>
 	)
 }
