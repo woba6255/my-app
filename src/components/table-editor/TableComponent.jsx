@@ -1,20 +1,37 @@
 import React, { useEffect, useState } from "react"
-import { Button, Table, } from "evergreen-ui";
+import { AddIcon, Button, Pane, Table, } from "evergreen-ui";
 import "react-datepicker/dist/react-datepicker.css";
 import { useTableContext } from "~/components/table-editor/TableReducer"
 import { Row } from "~/components/table-editor/TableRow"
 import { editBtnWidth } from "~/components/table-editor/ActionsMenu"
-import { ROW_STATUS_EDIT, ROW_STATUS_STATIC } from "~/components/table-editor/TableAliases"
+import {
+	TABLE_ROW_STATUS_CREATED,
+	TABLE_ROW_STATUS_STATIC,
+	TABLE_ROW_STATUS_STATIC_DISABLED, TABLE_REDUCER_CREATE_ROW
+} from "~/components/table-editor/TableAliases"
 
 
 export function TableCreator({ data, schema }) {
 	// TODO: validate all table-editor
 	const [editingRow, setEditingRow] = useState(null)
 	const { state, dispatch } = useTableContext()
+	const { eventsMiddleware } = schema
 
 	useEffect(() => {
 		dispatch({ schema, data })
-	}, [data])
+	}, [data, schema])
+
+	// Emit on row lvl
+	const tableActions = {
+		async createRow() {
+			const [startValue, editAfterCreate] = eventsMiddleware.onRowCreate()
+			if (startValue && startValue.id && editAfterCreate) setEditingRow({
+				id: startValue.id,
+				status: TABLE_ROW_STATUS_CREATED
+			})
+			dispatch({ type: TABLE_REDUCER_CREATE_ROW, payload: startValue })
+		}
+	}
 
 
 	return (
@@ -42,17 +59,31 @@ export function TableCreator({ data, schema }) {
 					<Table.Body style={{ overflowY: 'scroll' }}>
 						{
 							state.data && state.data.map(row => {
-								// TODO HOT
-								const rowStatus = (editingRow && row.id === editingRow.id) ? editingRow.status : ROW_STATUS_STATIC
+								const rowStatus = (editingRow && row.id === editingRow.id)
+									? editingRow.status
+									: (editingRow === null)
+										? TABLE_ROW_STATUS_STATIC
+										: TABLE_ROW_STATUS_STATIC_DISABLED
+
 								return (
-									<Row rowID={row.id} schema={schema} rowStatus={rowStatus}
+									<Row key={row.id} rowID={row.id} schema={schema} rowStatus={rowStatus}
 									     setEditingRow={setEditingRow}/>
 								)
 							})
 						}
 					</Table.Body>
 				</Table>
-				<Button onClick={() => console.log('hh')}>???</Button>
+				<Pane
+					display="flex"
+					alignItems="center"
+					justifyContent="center"
+					margin="7px"
+				>
+					{
+						editingRow === null
+						&& <Button onClick={() => tableActions.createRow()}><AddIcon/></Button>
+					}
+				</Pane>
 			</div>
 			: <p>No data...</p>
 	)

@@ -1,4 +1,4 @@
-import { CELL_ROLE_ID } from "~/components/table-editor/TableAliases"
+import { TABLE_CELL_ROLE_ID } from "~/components/table-editor/TableAliases"
 
 /**  HELPERS  **/
 
@@ -18,7 +18,7 @@ function getCellStateFromRowState(rowState, cellKey) {
 }
 
 function getKeyFromIDRole(schema) {
-	return schema.find(element => element.role === CELL_ROLE_ID)
+	return schema.find(element => element.role === TABLE_CELL_ROLE_ID)
 }
 
 function findByID(data, key, ID) {

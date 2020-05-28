@@ -1,2 +1,2 @@
-### `yarn server`
-### `yarn dev`
+1. ### `yarn server`
+2. ### `yarn start`

@@ -1,6 +1,6 @@
 import ftch from '../index'
 import PropTypes from "prop-types";
-import { config } from '~/config'
+import { API_URL_ROUTE_POSTS } from "~/modules/fetch/ApiRouts"
 
 export class PostsManger {
 	static postType = PropTypes.shape({
@@ -17,22 +17,22 @@ export class PostsManger {
 
 	static async getAll() {
 		// TODO validate
-		return await ftch.GET(config.postsUrl)
+		return await ftch.GET(API_URL_ROUTE_POSTS)
 	}
 
 	static async createOne(data) {
 		// TODO validate
-		return await ftch.POST(config.postsUrl, data)
+		return await ftch.POST(API_URL_ROUTE_POSTS, data)
 	}
 
 	static async deleteOneByID(ID) {
 		// TODO validate
-		return await ftch.DELETE(config.postsUrl + '/' + ID)
+		return await ftch.DELETE(API_URL_ROUTE_POSTS + '/' + ID)
 	}
 
 	static async editOne(newValue, ID = newValue.id) {
 		// TODO validate
-		return await ftch.PUT(config.postsUrl + '/' + ID, newValue)
+		return await ftch.PUT(API_URL_ROUTE_POSTS + '/' + ID, newValue)
 	}
 }
 
