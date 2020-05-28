@@ -4,6 +4,8 @@ import { useHistory } from "react-router"
 import { routerPostEditor } from "~/views/posts-editor"
 import { ROUTE_INDEX, ROUTE_METRICS, ROUTE_POST_EDITOR, RenderRoutes } from "~/modules/router"
 import { IndexViewGraphTable } from "~/views/metrics"
+import { NavBar } from "~/modules/nav-bar/NavBar"
+import { PageBasic } from "~/components/page"
 
 
 export function routerIndex() {
@@ -15,11 +17,12 @@ export function routerIndex() {
 }
 
 function Page() {
-	const history = useHistory()
 	return (
 		<>
-			<Button onClick={() => history.push(ROUTE_METRICS)}>METRICS</Button>
-			<Button onClick={() => history.push(ROUTE_POST_EDITOR)}>Post Editor Table</Button>
+			<NavBar />
+			<PageBasic>
+				<p>Home!!!</p>
+			</PageBasic>
 		</>
 	)
 }
